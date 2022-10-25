@@ -1,11 +1,13 @@
 #include "ChessBoard.hh"
 #include "ChessPiece.hh"
-//#include "PawnPiece.hh"
-//#include "RookPiece.hh"
-//#include "BishopPiece.hh"
+#include "PawnPiece.hh"
+#include "RookPiece.hh"
+#include "BishopPiece.hh"
 //#include "KingPiece.hh"
 
 using Student::ChessPiece;
+using Student::BishopPiece;
+
 
 ChessPiece::ChessPiece(ChessBoard& board, Color color, int row, int column) : mBoard(board)
 {
@@ -36,26 +38,12 @@ int ChessPiece::getRow()
     return mRow;
 }
 
-/*
-
-BishopPiece::isValidDiagonalMove(int toRow, int toColumn)
-{
-    return true;
+void ChessPiece::setPosition(int row, int column){
+    mRow = row;
+    mColumn = column;
 }
 
-BishopPiece::BishopPiece(ChessBoard& board, Color color, int startRow, int startColumn)
-{
 
-}
 
-BishopPiece::canMoveToLocation(int toRow, int toColumn)
-{
 
-}
-
-BishopPiece::ToString()
-{
-
-}
-*/
-
+ 

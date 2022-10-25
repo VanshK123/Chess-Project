@@ -48,7 +48,7 @@ const char* BishopPiece::toString()
     //step 1
     if(ChessPiece::getColor() == Color::Black)
     {
-    return "\u265D";
+        return "\u265D";
     }
     return "\u2657";
 }

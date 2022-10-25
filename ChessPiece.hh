@@ -66,7 +66,7 @@ namespace Student {
        * @param column
        * The new column number of the piece.
        */
-      //virtual void setPosition(int row, int column);
+      virtual void setPosition(int row, int column);
 
       /**
        * @brief

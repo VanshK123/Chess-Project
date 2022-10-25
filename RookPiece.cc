@@ -26,9 +26,11 @@ bool RookPiece::canMoveToLocation(int toRow, int toColumn)
     int col = mBoard.getNumCols();
 
     if(toRow > row || toColumn > col || toRow < 0 || toColumn < 0){
+        printf("first if");
         return false;
     }
     if(mBoard.isOccupiedWithColor(toRow, toColumn, getColor())){
+        printf("Second if");
         return false;
     }
 

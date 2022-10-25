@@ -1,10 +1,12 @@
 #include "ChessBoard.hh"
+#include "ChessPiece.hh"
 #include "PawnPiece.hh"
 #include "RookPiece.hh"
 #include "BishopPiece.hh"
 #include "KingPiece.hh"
 
 using Student::ChessBoard;
+using Student::ChessPiece;
 
 ChessBoard::ChessBoard(int numRow, int numCol) {
   
@@ -23,17 +25,66 @@ ChessBoard::~ChessBoard() {
 
 void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startColumn) {
 
-  //ChessPiece(ChessBoard& board, Color color, int row, int column);
+  if(startRow < 0 || startColumn < 0 || startRow > numRows || startColumn > numCols){
+    return;
+  }
+
+  ChessPiece *piece;
+
+  if(ty == Type::Bishop){
+    piece = new BishopPiece(*this,col,startRow,startColumn);
+  }
+  if(ty == Type::Pawn){
+    piece = new PawnPiece(*this,col,startRow,startColumn);
+  }
+  if(ty == Type::Rook){
+    piece = new RookPiece(*this,col,startRow,startColumn);
+  }
+ 
+
+  if(isOccupied(startRow,startColumn)){
+    delete board.at(startRow).at(startColumn);
+    board.at(startRow).at(startColumn) = piece;
+  }
+  else{
+    board.at(startRow).at(startColumn);
+  }
 
   return;
 }
 
 void ChessBoard::removeChessPiece(int row, int column) {
+  delete board.at(row).at(column);
+  board.at(row).at(column) = nullptr;
+
   return;
 }
 
+bool ChessBoard::isOccupied(int row, int column){
+  if(board.at(row).at(column) != nullptr){
+    return true;
+  }
+  return false;
+}
+
 bool ChessBoard::isOccupiedWithColor(int row, int column, Color color) {
-  return true;
+  
+  if(board.at(row).at(column) != nullptr && color == getPiece(row,column)->getColor()){
+    return true;
+  }
+  return false;
+}
+
+bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColumn) {
+  
+  if(getPiece(fromRow,fromColumn) == nullptr){
+    printf("bruh\n");
+    return false;
+  }
+
+  return (getPiece(fromRow,fromColumn)->canMoveToLocation(toRow,toColumn));
+
+    
 }
 
 void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn) {
@@ -41,12 +92,13 @@ void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn)
 }
 
 bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn) {
+
+
+
   return true;
 }
 
-bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColumn) {
-  return true;
-}
+
 
 bool ChessBoard::isPieceUnderThreat(int row, int column) {
   return true;
