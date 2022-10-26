@@ -4,51 +4,117 @@
 using Student::ChessPiece;
 using Student::RookPiece;
 
-/*
+static int sign(int x);
+static int absolute(int x);
+static int sign(int x)
+{
+    return (x > 0) - (x < 0);
+}
+static int absolute(int x)
+{
+    return x * sign(x);
+}
+
 bool RookPiece::isValidColumnMove(int toColumn)
 {
-    //step 1
+    // step 1
+    int col = getColumn();
+    int xMove = toColumn - col;
 
+    for (int i = 1; i < xMove; i++)
+    {
+        Color colofotherpiece = getColor() == Color::Black ? Color::White : Color::Black;
+        if (mBoard.isOccupiedWithColor(getRow(), col + (sign(xMove) * i), colofotherpiece))
+        {
+            //printf("[ROOK] row blocking FAILED\n");
+            return false;
+        }
+    }
+    //printf("[ROOK] row blocking passed\n");
     return true;
 }
+
 
 bool RookPiece::isValidRowMove(int toRow)
 {
-    //step 1
+    // step 1
+    int row = getRow();
+    int yMove = toRow - row;
+
+    for (int i = 1; i < yMove; i++)
+    {
+        Color colofotherpiece = getColor() == Color::Black ? Color::White : Color::Black;
+        if (mBoard.isOccupiedWithColor(row + (sign(yMove) * i), getColumn(), colofotherpiece))
+        {
+            //printf("[ROOK] row blocking FAILED\n");
+            return false;
+        }
+    }
+    //printf("[ROOK] row blocking passed\n");
     return true;
 }
-*/
 
 bool RookPiece::canMoveToLocation(int toRow, int toColumn)
 {
-    //step 2
     int row = mBoard.getNumRows();
     int col = mBoard.getNumCols();
+    int ymove = toRow - getRow();
+    int xmove = toColumn - getColumn();
+    //printf("ROOK TEST MOVE, %d %d to %d %d moving %d, %d\n", getRow(), getColumn(), toRow, toColumn, ymove, xmove);
+    if (toRow > row || toColumn > col || toRow < 0 || toColumn < 0)
+    {
+        //printf("[ROOK] OUT OF BOUNDS FAILED\n");
+        return false;
+    }
+    //printf("[ROOK] OUT OF BOUNDS PASSED\n");
 
-    if(toRow > row || toColumn > col || toRow < 0 || toColumn < 0){
-        printf("first if");
+    if (mBoard.isOccupiedWithColor(toRow, toColumn, getColor()))
+    {
+        //printf("ROOK OCCUPIED WITH SAME COLOR\n");
         return false;
     }
-    if(mBoard.isOccupiedWithColor(toRow, toColumn, getColor())){
-        printf("Second if");
+
+    if(absolute(xmove) != 0 && absolute(ymove) != 0)
+    {
+        //printf("[ROOK] diagonal move failed\n");
         return false;
     }
+
+    if (absolute(xmove) != 0)
+    {
+        if (!isValidColumnMove(toColumn))
+        {
+            //printf("[ROOK] Rook col move failed\n");
+            return false;
+        }
+        //printf("[ROOK] Rook col move passed\n");
+    }
+
+    if (absolute(ymove) != 0)
+    {
+        if (!isValidRowMove(toRow))
+        {
+            //printf("[ROOK] Rook row move failed\n");
+            return false;
+        }
+        //printf("[ROOK] Rook row move passed\n");
+    }
+
+    //printf("[ROOK] CANMOVE\n");
 
     return true;
 }
 
-RookPiece::RookPiece(ChessBoard& board, Color color, int startRow, int startColumn) : ChessPiece(board, color, startRow, startColumn){
-
+RookPiece::RookPiece(ChessBoard &board, Color color, int startRow, int startColumn) : ChessPiece(board, color, startRow, startColumn)
+{
 }
 
-const char* RookPiece::toString()
+const char *RookPiece::toString()
 {
-    //step 1
-    if(ChessPiece::getColor() == Color::Black)
+    // step 1
+    if (ChessPiece::getColor() == Color::Black)
     {
-    return "\u265C";
+        return "\u265C";
     }
     return "\u2656";
 }
-
-

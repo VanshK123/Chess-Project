@@ -33,7 +33,7 @@ namespace Student {
        * @param column
        * The column number of the piece to be deleted.
        */
-      void removeChessPiece(int row, int column);
+      //void removeChessPiece(int row, int column);
       /**
        * @brief
        * Forcefully moves a piece without any checks at all.
@@ -59,6 +59,8 @@ namespace Student {
        * Number of columns of the chessboard
        */
       ChessBoard(int numRow, int numCol);
+
+      void removeChessPiece(int row, int column);
 
       /**
        * @brief

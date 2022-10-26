@@ -1,0 +1,14 @@
+./test_scripts/part1_4x4_1.txt
+ChessBoard->board appears to be out of sync at line 3
+Initial state:
+  0123
+  ----
+0|    |
+1|    |
+2|    |
+3|  ♖ |
+  ----
+
+Unrecognised function call for an action
+Score 1 / 0
+
