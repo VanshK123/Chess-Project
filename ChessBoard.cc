@@ -25,19 +25,25 @@ ChessBoard::~ChessBoard() {
 
 void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startColumn) {
 
+  
   if(startRow < 0 || startColumn < 0 || startRow > numRows || startColumn > numCols){
     return;
   }
 
-  ChessPiece *piece;
+  ChessPiece *piece = NULL;
+  //printf("TYPE: %d COLOR: %d\n", ty, col);
 
   if(ty == Type::Bishop){
+     //printf("BISHOP row%d col: %d\n", startRow, startColumn);
     piece = new BishopPiece(*this,col,startRow,startColumn);
+   
   }
   if(ty == Type::Pawn){
+    //printf("Pawn row%d col: %d\n", startRow, startColumn);
     piece = new PawnPiece(*this,col,startRow,startColumn);
   }
   if(ty == Type::Rook){
+    //printf("Rook row%d col: %d\n", startRow, startColumn);
     piece = new RookPiece(*this,col,startRow,startColumn);
   }
  
@@ -47,8 +53,13 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
     board.at(startRow).at(startColumn) = piece;
   }
   else{
-    board.at(startRow).at(startColumn);
+    board.at(startRow).at(startColumn) = piece;
   }
+  
+  if(col == Color::Black){
+    blackPieces
+  }
+  
 
   return;
 }
@@ -78,7 +89,7 @@ bool ChessBoard::isOccupiedWithColor(int row, int column, Color color) {
 bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColumn) {
   
   if(getPiece(fromRow,fromColumn) == nullptr){
-    printf("bruh\n");
+    //printf("bruh\n");
     return false;
   }
 
@@ -110,7 +121,7 @@ bool ChessBoard::isKingSafeAfterMove(int fromRow, int fromColumn, int toRow, int
 
 std::ostringstream ChessBoard::displayBoard() {
   std::ostringstream outputString;
-  printf("PRINTING DISPLAY BOARD... (Board %d %d)\n", numCols, numRows);
+  //printf("PRINTING DISPLAY BOARD... (Board %d %d)\n", numCols, numRows);
   // top scale
   outputString << "  ";
   for(int i = 0; i < numCols; i++) {
