@@ -154,20 +154,83 @@ bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColum
 }
 
 void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn) {
+  //does nothing if not occupied
+  if(!isOccupied(fromRow,fromColumn)){
+    return;
+  }
+
+  //stores piece in temp variable
+  ChessPiece *temp = getPiece(fromRow,fromColumn);
+
+  //removes piece from old location
+  removeChessPiece(fromRow,fromColumn);
+
+  //removes piece from old location in list
+  if(temp->getColor() == Color::Black){
+    blackPieces.remove(temp);
+  }
+  else{
+    whitePieces.remove(temp);
+  }
+
+  //removes piece from new location if occupied
+  if(isOccupied(toRow,toColumn)){
+    removeChessPiece(toRow,toColumn);
+  }
+
+  //moves piece to new location
+  createChessPiece(temp->getColor(),temp->getType(),toRow,toColumn);
+
+  //deletes temp variable
+  delete temp;
+
   return;
 }
 
 bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn) {
 
+  //checks if move is valid
+  if(!isValidMove(fromRow,fromColumn,toRow,toColumn)){
+    return false;
+  }
 
+  //forces move
+  forceMove(fromRow,fromColumn,toRow,toColumn);
 
+  //returns true if move is valid
   return true;
 }
 
 
 
 bool ChessBoard::isPieceUnderThreat(int row, int column) {
-  return true;
+  //checks if piece is under threat
+
+  //checks if piece is null 
+  if(getPiece(row,column) == nullptr){
+    return false;
+  }
+
+  //checks if piece is black
+  if(getPiece(row,column)->getColor() == Color::Black){
+    //checks if piece is under threat by white
+    for(auto it = whitePieces.begin(); it != whitePieces.end(); ++it){
+      if((*it)->canMoveToLocation(row,column)){
+        return true;
+      }
+    }
+  }
+  //checks if piece is white
+  else{
+    //checks if piece is under threat by black
+    for(auto it = blackPieces.begin(); it != blackPieces.end(); ++it){
+      if((*it)->canMoveToLocation(row,column)){
+        return true;
+      }
+    }
+  }
+  //returns false if piece is not under threat
+  return false;
 }
 
 bool ChessBoard::isKingSafeAfterMove(int fromRow, int fromColumn, int toRow, int toColumn) {
