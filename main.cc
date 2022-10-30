@@ -7,6 +7,7 @@
 #include <sstream>
 
 int main() {
+    /**
     Student::ChessBoard sBoard(8, 8);
     sBoard.createChessPiece(Black, Pawn, 1, 1);
     sBoard.createChessPiece(White, Pawn, 2, 0);
@@ -219,4 +220,9 @@ sBoard.removeChessPiece(0, 3);
     sBoard.removeChessPiece(2, 3);
 std::cout <<  sBoard.displayBoard().str() << std::endl;
     return EXIT_SUCCESS;
+    */
+   Student::ChessBoard sBoard(4, 4);
+   sBoard.createChessPiece(White,Rook,0,2);
+   sBoard.createChessPiece(White,Rook,2,2);
+   assert(!sBoard.isValidMove(0,2,3,2));
 }

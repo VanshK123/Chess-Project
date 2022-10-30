@@ -5,8 +5,22 @@
 #include "BishopPiece.hh"
 #include "KingPiece.hh"
 
+#include <iostream>
+#include <list>
+#include <algorithm>
+#include <iterator>
+
 using Student::ChessBoard;
 using Student::ChessPiece;
+
+void printlist(std::list<ChessPiece*> const &list);
+void printlist(std::list<ChessPiece*> const &list)
+{
+  
+    for (auto const &i: list) {
+        std::cout << "COL" << i->getColor() << "POS"<< i->getRow() << i->getColumn() << std::endl;
+    }
+}
 
 ChessBoard::ChessBoard(int numRow, int numCol) {
   
@@ -20,14 +34,23 @@ ChessBoard::ChessBoard(ChessBoard& other) {
 }
 
 ChessBoard::~ChessBoard() {
-  board.clear();
+  //board.clear();
+  for(int i = 0; i < numRows;i++){
+    for(int j = 0; j<numRows;j++){
+      delete board.at(i).at(j);
+    }
+  }
+
 }
 
 void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startColumn) {
 
   
-  if(startRow < 0 || startColumn < 0 || startRow > numRows || startColumn > numCols){
+  if(startRow < 0 || startColumn < 0 || startRow >= numRows || startColumn >= numCols){
     return;
+  }
+  if(isOccupied(startRow,startColumn)){
+    removeChessPiece(startRow,startColumn);
   }
 
   ChessPiece *piece = NULL;
@@ -35,6 +58,7 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
 
   if(ty == Type::Bishop){
      //printf("BISHOP row%d col: %d\n", startRow, startColumn);
+   
     piece = new BishopPiece(*this,col,startRow,startColumn);
    
   }
@@ -56,18 +80,29 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
     board.at(startRow).at(startColumn) = piece;
   }
   
-  if(col == Color::Black){
-    blackPieces
+  if(piece->getColor() == Color::Black)
+  {
+    blackPieces.emplace_back(piece);
   }
-  
-
+  else
+  {
+    whitePieces.emplace_back(piece);
+  }
+  /*
+  std::cout << "blackPieces" << std::endl;
+  printlist(blackPieces);
+  std::cout << "whitePieces" << std::endl;
+  printlist(whitePieces);
+  */
+  //delete[] piece;
   return;
 }
 
 void ChessBoard::removeChessPiece(int row, int column) {
-  delete board.at(row).at(column);
-  board.at(row).at(column) = nullptr;
-
+  if(board.at(row).at(column) != nullptr){
+    delete board.at(row).at(column);
+    board.at(row).at(column) = nullptr;
+  }
   return;
 }
 
@@ -75,10 +110,12 @@ bool ChessBoard::isOccupied(int row, int column){
   if(board.at(row).at(column) != nullptr){
     return true;
   }
+
   return false;
 }
 
 bool ChessBoard::isOccupiedWithColor(int row, int column, Color color) {
+  
   
   if(board.at(row).at(column) != nullptr && color == getPiece(row,column)->getColor()){
     return true;
@@ -87,12 +124,30 @@ bool ChessBoard::isOccupiedWithColor(int row, int column, Color color) {
 }
 
 bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColumn) {
-  
+  //printf("From %d %d to %d %d\n",fromRow,fromColumn,toRow,toColumn);
+  if(toRow > numRows || toColumn > numCols || toRow < 0 || toColumn < 0 || fromRow > numRows || fromColumn > numCols || fromRow < 0 || fromColumn < 0){
+    //printf("lammo xd\n");
+    return false;
+  }
+
   if(getPiece(fromRow,fromColumn) == nullptr){
     //printf("bruh\n");
     return false;
   }
+  if(fromRow == toRow && fromColumn == toColumn){
+    //printf("Bruh moment\n");
+    return false;
+  }
 
+  
+  if(getPiece(fromRow,fromColumn)->canMoveToLocation(toRow,toColumn)){
+    printf("From %d %d to %d %d\n",fromRow,fromColumn,toRow,toColumn);
+  }
+  /*
+  else{
+    printf("FALSE ");
+    printf("From %d %d to %d %d\n",fromRow,fromColumn,toRow,toColumn);
+  }*/
   return (getPiece(fromRow,fromColumn)->canMoveToLocation(toRow,toColumn));
 
     

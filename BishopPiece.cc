@@ -1,6 +1,9 @@
 #include "ChessBoard.hh"
 #include "ChessPiece.hh"
 #include "BishopPiece.hh"
+#include<fstream>
+#include<string>
+#include<iostream>
 
 using Student::BishopPiece;
 using Student::ChessBoard;
@@ -36,9 +39,9 @@ bool BishopPiece::isValidDiagonalMove(int toRow, int toColumn)
     for (int i = 1; i < absolute(yMove); i++)
     {
         // check if diagonal has enemy piece
-        Color colofotherpiece = getColor() == Color::Black ? Color::White : Color::Black;
+        //Color colofotherpiece = getColor() == Color::Black ? Color::White : Color::Black;
         //printf("row: %d col: %d i: %d, %d %d, %d\n", row, col, i, row+(sign(yMove) * i), col+(sign(xMove) * i), mBoard.isOccupiedWithColor(row + (sign(yMove) * i), col + (sign(xMove) * i), colofotherpiece));
-        if (mBoard.isOccupiedWithColor(row + (sign(yMove) * i), col + (sign(xMove) * i), colofotherpiece))
+        if (mBoard.isOccupied(row + (sign(yMove) * i), col + (sign(xMove) * i)))
         {
             //printf("[BISHOP] blocking\n");
             return false;
@@ -50,6 +53,7 @@ bool BishopPiece::isValidDiagonalMove(int toRow, int toColumn)
 
 BishopPiece::BishopPiece(ChessBoard &board, Color color, int startRow, int startColumn) : ChessPiece(board, color, startRow, startColumn)
 {
+    mType = Bishop;
 }
 
 bool BishopPiece::canMoveToLocation(int toRow, int toColumn)
@@ -58,6 +62,13 @@ bool BishopPiece::canMoveToLocation(int toRow, int toColumn)
 
     int row = mBoard.getNumRows();
     int col = mBoard.getNumCols();
+       Color temp = getColor();
+    if(temp == Color::Black){
+        //printf("Black bishop Move\n");
+    }
+    else{
+        //printf("White bishop move\n");
+    }
     //int ymove = toRow - getRow();
     //int xmove = toColumn - getColumn();
     //printf("BISHOP TEST MOVE, %d %d to %d %d moving %d, %d\n", getRow(), getColumn(), toRow, toColumn, ymove, xmove);
@@ -70,7 +81,6 @@ bool BishopPiece::canMoveToLocation(int toRow, int toColumn)
 
     if (mBoard.isOccupiedWithColor(toRow, toColumn, getColor()))
     {
-        //printf("BISHOP OCCUPIED WITH SAME COLOR\n");
         return false;
     }
     if (!isValidDiagonalMove(toRow, toColumn))
