@@ -222,7 +222,12 @@ std::cout <<  sBoard.displayBoard().str() << std::endl;
     return EXIT_SUCCESS;
     */
    Student::ChessBoard sBoard(4, 4);
-   sBoard.createChessPiece(White,Rook,0,2);
-   sBoard.createChessPiece(White,Rook,2,2);
-   assert(!sBoard.isValidMove(0,2,3,2));
+   sBoard.createChessPiece(White,Rook,3,2);
+   sBoard.createChessPiece(Black,Bishop,1,3);
+   sBoard.createChessPiece(Black,Rook,1,1);
+   sBoard.createChessPiece(White,Rook,2,3);
+   //sBoard.movePiece(3,2,3,1);
+   assert(sBoard.movePiece(3,2,3,1));
+   assert(sBoard.movePiece(1,1,1,2));
+   assert(sBoard.movePiece(2,3,2,1));
 }
