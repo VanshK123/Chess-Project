@@ -146,13 +146,8 @@ bool PawnPiece::canMoveToLocation(int toRow, int toColumn)
     int col = mBoard.getNumCols();
     int xmove = toColumn - getColumn();
     int ymove = toRow - getRow();
-    Color temp = getColor();
-    if(temp == Color::Black){
-        //printf("Black rook Move");
-    }
-    else{
-        //printf("White Rook move");
-    }
+    //Color temp = getColor();
+
  //printf("[PAWN] Checking moves of pawn from %d %d to %d %d moving %d %d", getRow(), getColumn(), toRow, toColumn, ymove, xmove);
     //check null
     if(toRow > row || toColumn > col || toRow < 0 || toColumn < 0){
@@ -193,6 +188,7 @@ if(!isValidDiagonalMove(toRow,toColumn)){
     
     if(absolute(getRow()-toRow) <= 2 && getColumn() == toColumn){
         if(mBoard.isOccupiedWithColor(toRow,toColumn,colofotherpiece)){
+            //printf("bruh moment\n");
             return false;
         }
     }
@@ -213,5 +209,4 @@ const char* PawnPiece::toString()
     }
     return "\u2659";
 }
-
 

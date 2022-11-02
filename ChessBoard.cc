@@ -12,16 +12,17 @@
 
 using Student::ChessBoard;
 using Student::ChessPiece;
-
+/*
 void printlist(std::list<ChessPiece *> const &list);
+
 void printlist(std::list<ChessPiece *> const &list)
 {
 
   for (auto const &i : list)
   {
-    std::cout << "COL" << i->getColor() << "POS" << i->getRow() << i->getColumn() << std::endl;
+    std::cout << "COLOR " << i->getColor() << " POS " << i->getRow() << i->getColumn() << std::endl;
   }
-}
+}*/
 
 ChessBoard::ChessBoard(int numRow, int numCol)
 {
@@ -42,7 +43,7 @@ ChessBoard::~ChessBoard()
   
   for (int i = 0; i < numRows; i++)
   {
-    for (int j = 0; j < numRows; j++)
+    for (int j = 0; j < numCols; j++)
     {
        delete board.at(i).at(j);
       
@@ -114,8 +115,17 @@ void ChessBoard::removeChessPiece(int row, int column)
 {
   if (board.at(row).at(column) != nullptr)
   {
+    if (getPiece(row,column)->getColor() == Color::Black)
+    {
+      blackPieces.remove(getPiece(row,column));
+    }
+    else
+    {
+      whitePieces.remove(getPiece(row,column));
+    }
     delete board.at(row).at(column);
     board.at(row).at(column) = nullptr;
+    
   }
   return;
 }
@@ -174,6 +184,7 @@ bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColum
 
 void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn)
 {
+
   // does nothing if not occupied
   if (!isOccupied(fromRow, fromColumn))
   {
@@ -200,7 +211,7 @@ void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn)
   // removes piece from new location if occupied
   if (isOccupied(toRow, toColumn))
   {
-    
+    /*
     if (getPiece(toRow,toColumn)->getColor() == Color::Black)
     {
       blackPieces.remove(getPiece(toRow,toColumn));
@@ -208,14 +219,32 @@ void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn)
     else
     {
       whitePieces.remove(getPiece(toRow,toColumn));
-    }
+    }*/
     removeChessPiece(toRow, toColumn);
   }
 
   // moves piece to new location
+  
   createChessPiece(getPiece(fromRow,fromColumn)->getColor(), getPiece(fromRow,fromColumn)->getType(), toRow, toColumn);
   removeChessPiece(fromRow, fromColumn);
-
+  /*
+  std::cout << "blackPieces" << std::endl;
+  printlist(blackPieces);
+  std::cout << "whitePieces" << std::endl;
+  printlist(whitePieces);
+  printf("\n");
+  printf("BOARD \n");
+  for (int i = 0; i < numRows; i++){
+    for(int j = 0; j < numCols; j++)
+    {
+      if(board.at(i).at(j) != nullptr){
+        
+        std::cout << "COLOR " << getPiece(i,j)->getColor() << " POS " << getPiece(i,j)->getRow() << getPiece(i,j)->getColumn() << std::endl;
+      }
+    }
+  }*/
+  
+  //std::cout<<displayBoard().str()<<std::endl;
   // deletes temp variable
   //delete temp;
 
@@ -224,7 +253,7 @@ void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn)
 
 bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn)
 {
-
+  //printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
   // checks if move is valid
   if (!isValidMove(fromRow, fromColumn, toRow, toColumn))
   {
@@ -232,8 +261,14 @@ bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn)
   }
 
   // forces move
-  printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
+  if(turn != getPiece(fromRow,fromColumn)->getColor()){
+   // printf("FALSE TURN\n");
+    return false;
+  }
+
   forceMove(fromRow, fromColumn, toRow, toColumn);
+  turn = (turn == Color::White) ? Color::Black : Color::White;
+  //std::cout<<"TURN "<<
 
   // returns true if move is valid
   return true;
@@ -242,7 +277,8 @@ bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn)
 bool ChessBoard::isPieceUnderThreat(int row, int column)
 {
   // checks if piece is under threat
-
+  //printf("UNDER THREAT SCAN\n");
+  //printf("ROW %d COL %d\n", row,column);
   // checks if piece is null
   if (getPiece(row, column) == nullptr)
   {
@@ -252,18 +288,22 @@ bool ChessBoard::isPieceUnderThreat(int row, int column)
   // checks if piece is black
   if (getPiece(row, column)->getColor() == Color::Black)
   {
+    //printf("BLACK PIECE CHECK\n");
     // checks if piece is under threat by white
     for (auto it = whitePieces.begin(); it != whitePieces.end(); ++it)
     {
-      if ((*it)->canMoveToLocation(row, column))
-      {
-        return true;
-      }
+
+        if ((*it)->canMoveToLocation(row, column))
+        {
+          return true;
+        }
+      
     }
   }
   // checks if piece is white
   else
   {
+    //printf("WHITE PIECE CHECK\n");
     // checks if piece is under threat by black
     for (auto it = blackPieces.begin(); it != blackPieces.end(); ++it)
     {
