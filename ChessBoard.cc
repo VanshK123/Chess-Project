@@ -82,6 +82,11 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
     // printf("Rook row%d col: %d\n", startRow, startColumn);
     piece = new RookPiece(*this, col, startRow, startColumn);
   }
+  if (ty == Type::King)
+  {
+    // printf("King row%d col: %d\n", startRow, startColumn);
+    piece = new KingPiece(*this, col, startRow, startColumn);
+  }
 
   if (isOccupied(startRow, startColumn))
   {
