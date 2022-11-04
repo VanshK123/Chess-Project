@@ -324,6 +324,63 @@ bool ChessBoard::isPieceUnderThreat(int row, int column)
 
 bool ChessBoard::isKingSafeAfterMove(int fromRow, int fromColumn, int toRow, int toColumn)
 {
+  // checks if king is safe after move
+  int row = 0;
+  int column = 0;
+  if(getPiece(fromRow,fromColumn)->getColor() == Color::White){
+    for (auto it = blackPieces.begin(); it != blackPieces.end(); ++it)
+    {
+      if ((*it)->getType() == Type::King)
+      {
+        row = (*it)->getRow();
+        column = (*it)->getColumn();
+      }
+    }
+  }
+  else{
+    for (auto it = whitePieces.begin(); it != whitePieces.end(); ++it)
+    {
+      if ((*it)->getType() == Type::King)
+      {
+        row = (*it)->getRow();
+        column = (*it)->getColumn();
+      }
+    }
+  }
+
+  for(int i = fromRow; i < fromColumn; i++){
+    for(int j = fromColumn; j < toColumn; j++){
+      if(i == row || j == column){
+        return false;
+      }
+    }
+  }
+  if (getPiece(row, column)->getColor() == Color::Black)
+  {
+    //printf("BLACK PIECE CHECK\n");
+    // checks if piece is under threat by white
+    for (auto it = whitePieces.begin(); it != whitePieces.end(); ++it)
+    {
+
+        if ((*it)->canMoveToLocation(row, column))
+        {
+          return false;
+        }
+      
+    }
+  }
+  else
+  {
+    //printf("WHITE PIECE CHECK\n");
+    // checks if piece is under threat by black
+    for (auto it = blackPieces.begin(); it != blackPieces.end(); ++it)
+    {
+      if ((*it)->canMoveToLocation(row, column))
+      {
+        return false;
+      }
+    }
+  }
   return true;
 }
 
