@@ -11,7 +11,7 @@ using Student::BishopPiece;
 
 ChessPiece::ChessPiece(ChessBoard& board, Color color, int row, int column) : mBoard(board)
 {
-    //printf("CREATING CHESS PIECE WITH ROW %d COL %d COLOR %d\n", row, column, color);
+    printf("CREATING CHESS PIECE WITH ROW %d COL %d COLOR %d\n", row, column, color);
     mRow = row;
     mColumn = column;
     mColor = color;

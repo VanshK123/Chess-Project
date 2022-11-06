@@ -12,6 +12,7 @@
 
 using Student::ChessBoard;
 using Student::ChessPiece;
+
 /*
 void printlist(std::list<ChessPiece *> const &list);
 
@@ -40,13 +41,12 @@ ChessBoard::ChessBoard(ChessBoard &other)
 ChessBoard::~ChessBoard()
 {
   // board.clear();
-  
+
   for (int i = 0; i < numRows; i++)
   {
     for (int j = 0; j < numCols; j++)
     {
-       delete board.at(i).at(j);
-      
+      delete board.at(i).at(j);
     }
   }
 }
@@ -86,6 +86,16 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
   {
     // printf("King row%d col: %d\n", startRow, startColumn);
     piece = new KingPiece(*this, col, startRow, startColumn);
+    if (col == Color::White)
+    {
+      whiteKing = (KingPiece*)piece;
+    }
+    else
+    {
+      blackKing = (KingPiece*)piece;
+    }
+    printf("KING CREATED\n");
+    printf("KING COLOR %d\n", piece->getColor());
   }
 
   if (isOccupied(startRow, startColumn))
@@ -118,20 +128,36 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
 
 void ChessBoard::removeChessPiece(int row, int column)
 {
-  if (board.at(row).at(column) != nullptr)
+  if (board.at(row).at(column) == nullptr)
   {
-    if (getPiece(row,column)->getColor() == Color::Black)
+    return;
+  }
+  // check if is king, remove from king pointer
+  if (board.at(row).at(column)->getType() == Type::King)
+  {
+    printf("KING REMOVED\n");
+    if (board.at(row).at(column)->getColor() == Color::White)
     {
-      blackPieces.remove(getPiece(row,column));
+      whiteKing = nullptr;
     }
     else
     {
-      whitePieces.remove(getPiece(row,column));
+      blackKing = nullptr;
     }
-    delete board.at(row).at(column);
-    board.at(row).at(column) = nullptr;
-    
   }
+
+  // remove from color list
+  if (getPiece(row, column)->getColor() == Color::Black)
+  {
+    blackPieces.remove(getPiece(row, column));
+  }
+  else
+  {
+    whitePieces.remove(getPiece(row, column));
+  }
+  delete board.at(row).at(column);
+  board.at(row).at(column) = nullptr;
+
   return;
 }
 
@@ -157,21 +183,21 @@ bool ChessBoard::isOccupiedWithColor(int row, int column, Color color)
 
 bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColumn)
 {
-  // printf("From %d %d to %d %d\n",fromRow,fromColumn,toRow,toColumn);
+  printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
   if (toRow > numRows || toColumn > numCols || toRow < 0 || toColumn < 0 || fromRow > numRows || fromColumn > numCols || fromRow < 0 || fromColumn < 0)
   {
-    // printf("lammo xd\n");
+    printf("fails bounds check\n");
     return false;
   }
 
-  if (getPiece(fromRow, fromColumn) == nullptr)
+  if (getPiece(fromRow, fromColumn) == NULL)
   {
-    // printf("bruh\n");
+    printf("fails null check\n");
     return false;
   }
   if (fromRow == toRow && fromColumn == toColumn)
   {
-    // printf("Bruh moment\n");
+    printf("fails same check\n");
     return false;
   }
   /*
@@ -184,11 +210,18 @@ bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColum
     printf("FALSE ");
     printf("From %d %d to %d %d\n",fromRow,fromColumn,toRow,toColumn);
   }*/
-  return (getPiece(fromRow, fromColumn)->canMoveToLocation(toRow, toColumn));
+  bool canmove = getPiece(fromRow, fromColumn)->canMoveToLocation(toRow, toColumn);
+  if (canmove)
+  {
+    printf("\n---TRUE ");
+    printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
+  }
+  return canmove;
 }
 
 void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn)
 {
+  printf("Forcing From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
 
   // does nothing if not occupied
   if (!isOccupied(fromRow, fromColumn))
@@ -196,84 +229,48 @@ void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn)
     return;
   }
 
-  // stores piece in temp variable
-  //ChessPiece *temp = getPiece(fromRow, fromColumn);
-
-  // removes piece from old location
-  //removeChessPiece(fromRow, fromColumn);
-
-  // removes piece from old location in list
-
-  if (getPiece(fromRow,fromColumn)->getColor() == Color::Black)
+  // removes piece from from location list
+  if (getPiece(fromRow, fromColumn)->getColor() == Color::Black)
   {
-    blackPieces.remove(getPiece(fromRow,fromColumn));
+    blackPieces.remove(getPiece(fromRow, fromColumn));
   }
   else
   {
-    whitePieces.remove(getPiece(fromRow,fromColumn));
+    whitePieces.remove(getPiece(fromRow, fromColumn));
   }
 
   // removes piece from new location if occupied
   if (isOccupied(toRow, toColumn))
   {
-    /*
-    if (getPiece(toRow,toColumn)->getColor() == Color::Black)
-    {
-      blackPieces.remove(getPiece(toRow,toColumn));
-    }
-    else
-    {
-      whitePieces.remove(getPiece(toRow,toColumn));
-    }*/
     removeChessPiece(toRow, toColumn);
   }
 
   // moves piece to new location
-  
-  createChessPiece(getPiece(fromRow,fromColumn)->getColor(), getPiece(fromRow,fromColumn)->getType(), toRow, toColumn);
+  createChessPiece(getPiece(fromRow, fromColumn)->getColor(), getPiece(fromRow, fromColumn)->getType(), toRow, toColumn);
   removeChessPiece(fromRow, fromColumn);
-  /*
-  std::cout << "blackPieces" << std::endl;
-  printlist(blackPieces);
-  std::cout << "whitePieces" << std::endl;
-  printlist(whitePieces);
-  printf("\n");
-  printf("BOARD \n");
-  for (int i = 0; i < numRows; i++){
-    for(int j = 0; j < numCols; j++)
-    {
-      if(board.at(i).at(j) != nullptr){
-        
-        std::cout << "COLOR " << getPiece(i,j)->getColor() << " POS " << getPiece(i,j)->getRow() << getPiece(i,j)->getColumn() << std::endl;
-      }
-    }
-  }*/
-  
-  //std::cout<<displayBoard().str()<<std::endl;
-  // deletes temp variable
-  //delete temp;
 
   return;
 }
 
 bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn)
 {
-  //printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
-  // checks if move is valid
+   printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
+  //  checks if move is valid
   if (!isValidMove(fromRow, fromColumn, toRow, toColumn))
   {
     return false;
   }
 
   // forces move
-  if(turn != getPiece(fromRow,fromColumn)->getColor()){
-   // printf("FALSE TURN\n");
+  if (turn != getPiece(fromRow, fromColumn)->getColor())
+  {
+    // printf("FALSE TURN\n");
     return false;
   }
 
   forceMove(fromRow, fromColumn, toRow, toColumn);
   turn = (turn == Color::White) ? Color::Black : Color::White;
-  //std::cout<<"TURN "<<
+  // std::cout<<"TURN "<<
 
   // returns true if move is valid
   return true;
@@ -282,8 +279,8 @@ bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn)
 bool ChessBoard::isPieceUnderThreat(int row, int column)
 {
   // checks if piece is under threat
-  //printf("UNDER THREAT SCAN\n");
-  //printf("ROW %d COL %d\n", row,column);
+  // printf("UNDER THREAT SCAN\n");
+  // printf("ROW %d COL %d\n", row,column);
   // checks if piece is null
   if (getPiece(row, column) == nullptr)
   {
@@ -291,29 +288,33 @@ bool ChessBoard::isPieceUnderThreat(int row, int column)
   }
 
   // checks if piece is black
-  if (getPiece(row, column)->getColor() == Color::Black)
+  Color piececolor = getPiece(row, column)->getColor();
+  printf("PIECE COLOR %d\n", piececolor);
+  if (piececolor == Color::Black)
   {
-    //printf("BLACK PIECE CHECK\n");
-    // checks if piece is under threat by white
+    // printf("BLACK PIECE CHECK\n");
+    //  checks if piece is under threat by white
     for (auto it = whitePieces.begin(); it != whitePieces.end(); ++it)
     {
 
-        if ((*it)->canMoveToLocation(row, column))
-        {
-          return true;
-        }
-      
+      if ((*it)->canMoveToLocation(row, column))
+      {
+        return true;
+      }
     }
   }
   // checks if piece is white
   else
   {
-    //printf("WHITE PIECE CHECK\n");
-    // checks if piece is under threat by black
+    // printf("WHITE PIECE CHECK\n");
+    //  checks if piece is under threat by black
+    printf("LIST SIZE %d\n", blackPieces.size());
     for (auto it = blackPieces.begin(); it != blackPieces.end(); ++it)
     {
+      
       if ((*it)->canMoveToLocation(row, column))
       {
+        printf("Piece at %d %d is under threat by %d %d\n", row, column, (*it)->getRow(), (*it)->getColumn());
         return true;
       }
     }
@@ -324,6 +325,66 @@ bool ChessBoard::isPieceUnderThreat(int row, int column)
 
 bool ChessBoard::isKingSafeAfterMove(int fromRow, int fromColumn, int toRow, int toColumn)
 {
+  // finds color of frompiece
+  Color fromColor = getPiece(fromRow, fromColumn)->getColor();
+  // checks if king of same color exists
+  if (fromColor == Color::Black)
+  {
+    if (blackKing == nullptr)
+    {
+      printf("BLACK KING NULL\n");
+      return false;
+    }
+  }
+  else
+  {
+    if (whiteKing == nullptr)
+    {
+      printf("WHITE KING NULL\n");
+      return false;
+    }
+  }
+
+  // we know king exists
+  // store king position
+  int kingRow = (fromColor == Color::Black) ? blackKing->getRow() : whiteKing->getRow();
+  int kingCol = (fromColor == Color::Black) ? blackKing->getColumn() : whiteKing->getColumn();
+
+  // checks if king is in from position
+  if (kingRow == fromRow && kingCol == fromColumn)
+  {
+    kingRow = toRow;
+    kingCol = toColumn;
+  }
+
+  // checks if king is safe after move
+  printf("King is at %d %d\n", kingRow, kingCol);
+  //iterate through all pieces of opposite color
+  if (fromColor == Color::Black)
+  {
+    for (auto it = whitePieces.begin(); it != whitePieces.end(); ++it)
+    {
+      if ((*it)->canMoveToLocation(kingRow, kingCol))
+      {
+        printf("King is under threat by %d %d\n", (*it)->getRow(), (*it)->getColumn());
+        return false;
+      }
+    }
+  }
+  else
+  {
+    for (auto it = blackPieces.begin(); it != blackPieces.end(); ++it)
+    {
+      if ((*it)->canMoveToLocation(kingRow, kingCol))
+      {
+        printf("King is under threat by %d %d\n", (*it)->getRow(), (*it)->getColumn());
+        return false;
+      }
+    }
+  }
+  printf("KING IS SAFE\n");
+  return true;
+  /*
   // checks if king is safe after move
   int row = 0;
   int column = 0;
@@ -366,7 +427,7 @@ bool ChessBoard::isKingSafeAfterMove(int fromRow, int fromColumn, int toRow, int
         {
           return false;
         }
-      
+
     }
   }
   else
@@ -381,7 +442,7 @@ bool ChessBoard::isKingSafeAfterMove(int fromRow, int fromColumn, int toRow, int
       }
     }
   }
-  return true;
+  */
 }
 
 std::ostringstream ChessBoard::displayBoard()
