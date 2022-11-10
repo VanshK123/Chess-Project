@@ -103,23 +103,23 @@ bool RookPiece::canMoveToLocation(int toRow, int toColumn)
     int col = mBoard.getNumCols();
     int ymove = toRow - getRow();
     int xmove = toColumn - getColumn();
-    printf("ROOK TEST MOVE, %d %d to %d %d moving %d, %d\n", getRow(), getColumn(), toRow, toColumn, ymove, xmove);
+    //printf("ROOK TEST MOVE, %d %d to %d %d moving %d, %d\n", getRow(), getColumn(), toRow, toColumn, ymove, xmove);
     if (toRow > row || toColumn > col || toRow < 0 || toColumn < 0)
     {
-        printf("[ROOK] OUT OF BOUNDS FAILED\n");
+        //printf("[ROOK] OUT OF BOUNDS FAILED\n");
         return false;
     }
     //printf("[ROOK] OUT OF BOUNDS PASSED\n");
 
     if (mBoard.isOccupiedWithColor(toRow, toColumn, getColor()))
     {
-        printf("ROOK OCCUPIED WITH SAME COLOR\n");
+        //printf("ROOK OCCUPIED WITH SAME COLOR\n");
         return false;
     }
 
     if(absolute(xmove) != 0 && absolute(ymove) != 0)
     {
-        printf("[ROOK] diagonal move failed\n");
+        //printf("[ROOK] diagonal move failed\n");
         return false;
     }
 

@@ -68,7 +68,7 @@ bool KingPiece::canMoveToLocation(int toRow, int toColumn)
     //check if move will put king in check
     if (!mBoard.isKingSafeAfterMove(getRow(), getColumn(), toRow, toColumn))
     {
-        printf("King is not safe after move\n");
+        //printf("King is not safe after move\n");
         return false;
     }
 

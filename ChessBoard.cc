@@ -94,8 +94,8 @@ void ChessBoard::createChessPiece(Color col, Type ty, int startRow, int startCol
     {
       blackKing = (KingPiece*)piece;
     }
-    printf("KING CREATED\n");
-    printf("KING COLOR %d\n", piece->getColor());
+    //printf("KING CREATED\n");
+    //printf("KING COLOR %d\n", piece->getColor());
   }
 
   if (isOccupied(startRow, startColumn))
@@ -135,7 +135,7 @@ void ChessBoard::removeChessPiece(int row, int column)
   // check if is king, remove from king pointer
   if (board.at(row).at(column)->getType() == Type::King)
   {
-    printf("KING REMOVED\n");
+    //printf("KING REMOVED\n");
     if (board.at(row).at(column)->getColor() == Color::White)
     {
       whiteKing = nullptr;
@@ -183,21 +183,21 @@ bool ChessBoard::isOccupiedWithColor(int row, int column, Color color)
 
 bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColumn)
 {
-  printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
+  //printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
   if (toRow > numRows || toColumn > numCols || toRow < 0 || toColumn < 0 || fromRow > numRows || fromColumn > numCols || fromRow < 0 || fromColumn < 0)
   {
-    printf("fails bounds check\n");
+    //printf("fails bounds check\n");
     return false;
   }
 
   if (getPiece(fromRow, fromColumn) == NULL)
   {
-    printf("fails null check\n");
+    //printf("fails null check\n");
     return false;
   }
   if (fromRow == toRow && fromColumn == toColumn)
   {
-    printf("fails same check\n");
+    //printf("fails same check\n");
     return false;
   }
   /*
@@ -213,15 +213,15 @@ bool ChessBoard::isValidMove(int fromRow, int fromColumn, int toRow, int toColum
   bool canmove = getPiece(fromRow, fromColumn)->canMoveToLocation(toRow, toColumn);
   if (canmove)
   {
-    printf("\n---TRUE ");
-    printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
+    //printf("\n---TRUE ");
+    //printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
   }
   return canmove;
 }
 
 void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn)
 {
-  printf("Forcing From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
+  //printf("Forcing From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
 
   // does nothing if not occupied
   if (!isOccupied(fromRow, fromColumn))
@@ -277,7 +277,7 @@ void ChessBoard::forceMove(int fromRow, int fromColumn, int toRow, int toColumn)
 
 bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn)
 {
-   printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
+   //printf("From %d %d to %d %d\n", fromRow, fromColumn, toRow, toColumn);
   //  checks if move is valid
   if (!isValidMove(fromRow, fromColumn, toRow, toColumn))
   {
@@ -302,8 +302,6 @@ bool ChessBoard::movePiece(int fromRow, int fromColumn, int toRow, int toColumn)
 bool ChessBoard::isPieceUnderThreat(int row, int column)
 {
   // checks if piece is under threat
-  // printf("UNDER THREAT SCAN\n");
-  // printf("ROW %d COL %d\n", row,column);
   // checks if piece is null
   if (getPiece(row, column) == nullptr)
   {
@@ -312,34 +310,41 @@ bool ChessBoard::isPieceUnderThreat(int row, int column)
 
   // checks if piece is black
   Color piececolor = getPiece(row, column)->getColor();
-  printf("PIECE COLOR %d\n", piececolor);
+  //printf("PIECE COLOR %d\n", piececolor);
   if (piececolor == Color::Black)
   {
-     printf("BLACK PIECE CHECK\n");
+     //printf("BLACK PIECE CHECK\n");
     //  checks if piece is under threat by white
     for (auto it = whitePieces.begin(); it != whitePieces.end(); ++it)
     {
-
-      if ((*it)->canMoveToLocation(row, column))
+      //check if piece can move to location only if it is not a king
+      if ((*it)->getType() != Type::King)
       {
-        printf("Piece at %d %d is under threat by %d %d\n", row, column, (*it)->getRow(), (*it)->getColumn());
-        return true;
+        if ((*it)->canMoveToLocation(row, column))
+        {
+          //printf("Piece at %d %d is under threat by %d %d\n", row, column, (*it)->getRow(), (*it)->getColumn());
+          return true;
+        }
       }
+
     }
   }
   // checks if piece is white
   else
   {
-     printf("WHITE PIECE CHECK\n");
+     //printf("WHITE PIECE CHECK\n");
     //  checks if piece is under threat by black
-    printf("LIST SIZE %d\n", blackPieces.size());
+    //printf("LIST SIZE %d\n", blackPieces.size());
     for (auto it = blackPieces.begin(); it != blackPieces.end(); ++it)
     {
       
-      if ((*it)->canMoveToLocation(row, column))
+      if ((*it)->getType() != Type::King)
       {
-        printf("Piece at %d %d is under threat by %d %d\n", row, column, (*it)->getRow(), (*it)->getColumn());
-        return true;
+        if ((*it)->canMoveToLocation(row, column))
+        {
+          //printf("Piece at %d %d is under threat by %d %d\n", row, column, (*it)->getRow(), (*it)->getColumn());
+          return true;
+        }
       }
     }
   }
@@ -351,7 +356,7 @@ bool ChessBoard::isKingSafeAfterMove(int fromRow, int fromColumn, int toRow, int
 {
   // finds color of frompiece
   Color fromColor = getPiece(fromRow, fromColumn)->getColor();
-  printf("FROM COLOR %d from loc %d %d to loc %d %d\n", fromColor, fromRow, fromColumn, toRow, toColumn);
+  //printf("FROM COLOR %d from loc %d %d to loc %d %d\n", fromColor, fromRow, fromColumn, toRow, toColumn);
   // checks if king of same color exists
   if (fromColor == Color::Black)
   {
@@ -383,33 +388,39 @@ bool ChessBoard::isKingSafeAfterMove(int fromRow, int fromColumn, int toRow, int
   }
 
   // checks if king is safe after move
-  printf("King is at %d %d with color: %d\n", kingRow, kingCol, fromColor);
+  //printf("King is at %d %d with color: %d\n", kingRow, kingCol, fromColor);
   //iterate through all pieces of opposite color
   if (fromColor == Color::Black)
   {
-    printf("BLACK KING CHECK2\n");
+    //printf("BLACK KING CHECK2\n");
     for (auto it = whitePieces.begin(); it != whitePieces.end(); ++it)
     {
-      if ((*it)->canMoveToLocation(kingRow, kingCol))
+      if ((*it)->getType() != Type::King)
       {
-        printf("King is under threat by %d %d\n", (*it)->getRow(), (*it)->getColumn());
-        return false;
+        if ((*it)->canMoveToLocation(kingRow, kingCol))
+        {
+          //printf("King is under threat by %d %d\n", (*it)->getRow(), (*it)->getColumn());
+          return true;
+        }
       }
     }
   }
   else
   {
-    printf("WHITE KING CHECK2\n");
+    //printf("WHITE KING CHECK2\n");
     for (auto it = blackPieces.begin(); it != blackPieces.end(); ++it)
     {
-      if ((*it)->canMoveToLocation(kingRow, kingCol))
+     if ((*it)->getType() != Type::King)
       {
-        printf("King is under threat by %d %d\n", (*it)->getRow(), (*it)->getColumn());
-        return false;
+        if ((*it)->canMoveToLocation(kingRow, kingCol))
+        {
+          //printf("King is under threat by %d %d\n", (*it)->getRow(), (*it)->getColumn());
+          return true;
+        }
       }
     }
   }
-  printf("KING IS SAFE\n");
+  //printf("KING IS SAFE\n");
   return true;
   /*
   // checks if king is safe after move
